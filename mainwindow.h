@@ -6,6 +6,9 @@
 #include <QThread>
 #include <QTimer>
 #include "clean/classdataclean.h"
+#define CONV_HOUR 60
+#define CONV_MIN 60
+#define CONV_SEC 1000
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +22,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void init();
+    void resetValue();
 public slots:
     void slot_timeout();
 public:
@@ -33,6 +37,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    int curMs = 0;
+    int curSec = 0;
+    int curMin = 0;
+    int curHour = 0;
     int num = 0;
 };
 

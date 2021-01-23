@@ -25,13 +25,18 @@ void MainWindow::init()
     }
     if(tm == nullptr)
     {
-        tm = new QTimer(pTimer);
+        tm = new QTimer();
         QObject::connect(tm, SIGNAL(timeout()), this, SLOT(slot_timeout()));
-        tm->setInterval(1);
-//        tm->start();
-        tm->moveToThread(pTimer);
-        pTimer->start();
     }
+}
+
+void MainWindow::resetValue()
+{
+    curMs = 0;
+    curSec = 0;
+    curMin = 0;
+    curHour = 0;
+    num = 0;
 }
 
 void MainWindow::slot_timeout()
@@ -39,23 +44,25 @@ void MainWindow::slot_timeout()
     qDebug() << QString("%1:%2").arg(__FUNCTION__).arg(__LINE__);
     qDebug() << QThread::currentThreadId();
     num++;
-    ui->lcdNumber->display(QString::number(num));
+    curMs = num%CONV_SEC;
+    curSec = num/CONV_SEC;
+    curMin = curSec/CONV_MIN;
+    curHour = curMin/CONV_HOUR;
+    ui->lcdNumber_ms->display(QString::number(curMs));
+    ui->lcdNumber_s->display(QString::number(curSec%CONV_MIN));
+    ui->lcdNumber_m->display(QString::number(curMin%CONV_MIN));
+    ui->lcdNumber_h->display(QString::number(curHour));
 }
 
 void MainWindow::on_pushButton_start_clicked()
 {
-//    if(!pTimer->isRunning())
-//        pTimer->start();
-if(!tm->isActive())
-    tm->start();
+    if(!tm->isActive())
+        tm->start(1);
 }
 
 void MainWindow::on_pushButton_stop_clicked()
 {
-//    if(pTimer->isRunning())
-//        pTimer->quit();
-
-if(tm->isActive())
-    tm->stop();
-    num = 0;
+    if(tm->isActive())
+        tm->stop();
+    resetValue();
 }
